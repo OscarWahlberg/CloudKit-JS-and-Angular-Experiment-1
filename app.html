@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>
+    <script>
+        CloudKit.configure({
+            locale: 'en-us',
+            containers: [{
+                // Change this to a container identifier you own.
+                containerIdentifier: 'iCloud.com.Frostlight.Frostlight',
+                apiTokenAuth: {
+                    // And generate a web token through CloudKit Dashboard.
+                    apiToken: 'e929f3df725d09779f16bff52066b7f08c2ff4e90cf41d70cc27e4adfaab52a4',
+
+                    persist: true // Sets a cookie.
+                    /*                    signInButton: {
+                     id: 'apple-sign-in-button',
+                     theme: 'black' // Other options: 'white', 'white-with-outline'.
+                     },
+                     signOutButton: {
+                     id: 'apple-sign-out-button',
+                     theme: 'black'
+                     }*/
+                },
+                environment: 'development'
+            }]
+        });
+        var container = CloudKit.getDefaultContainer();
+        var database = container.publicCloudDatabase
+
+        // Set the query parameters.
+        var query = {
+            recordType: 'Projects'
+        };
+
+        var sortDescriptor = {
+            fieldName: 'name',
+            ascending: true
+        };
+        query.sortBy = [sortDescriptor];
+
+        // Set the options.
+        var options = {
+            // Restrict our returned fields to this array of keys.
+            //desiredKeys: null,
+
+            // Fetch 5 results at a time.
+            resultsLimit: 5
+
+        };
+
+        /*     // If we have a continuation marker, use it to fetch the next 5 results.
+         var continuationMarker = getContinuationMarker();
+         if(continuationMarker) {
+         options.continuationMarker = continuationMarker;
+         }*/
+
+        // Execute the query.
+        var response = database.performQuery(query, options)
+                .then(function (response) {
+                    console.log(response.toString());
+                    if (response.hasErrors) {
+
+                        // Handle them in your app.
+                        throw response.errors[0];
+
+                    } else {
+                        var records = response.records;
+                        console.log(records[0])
+                        // Save the continuation marker so we can fetch more results.
+                        //saveContinuationMarker(response.continuationMarker);
+
+                        return records;
+                    }
+                });
+        console.log(response.toString());
+    </script>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="app.css">
+    <title>Title</title>
+</head>
+<body>
+<div ng-app="app">
+    <div ng-controller="CarouselDemoCtrl" id="slides_control">
+        <div>
+            <carousel interval="myInterval">
+                <slide ng-repeat="slide in slides" active="slide.active">
+                    <img ng-src="{{slide.image}}">
+                    <div class="carousel-caption">
+                        <h4>Project {{$index+1}}</h4>
+                    </div>
+                </slide>
+            </carousel>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+<script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
